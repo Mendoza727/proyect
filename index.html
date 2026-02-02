@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matizes - Calzado de Cuero Premium</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        :root {
+            --primary: #2c1810;
+            --accent: #d4a574;
+            --light: #f8f6f3;
+            --text: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .font-serif {
+            font-family: 'Libre Baskerville', serif;
+        }
+
+        /* Announcement Bar Animation */
+        .announcement-bar {
+            animation: slideText 30s linear infinite;
+        }
+
+        @keyframes slideText {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Scroll Animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-fade {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .scroll-fade.active {
+            opacity: 1;
+        }
+
+        .scroll-scale {
+            opacity: 0;
+            transform: scale(0.85);
+            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scroll-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Product Card Hover */
+        .product-card {
+            transition: all 0.4s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .product-card img {
+            transition: transform 0.6s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Badge Animation */
+        .discount-badge {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Hero Image Animation */
+        .hero-image {
+            animation: fadeInZoom 1.5s ease-out;
+        }
+
+        @keyframes fadeInZoom {
+            0% {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Navbar Scroll Effect */
+        .navbar-scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c49563;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .cart-sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Marquee */
+        .marquee {
+            display: flex;
+            overflow: hidden;
+            user-select: none;
+            gap: 4rem;
+        }
+
+        .marquee-content {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-around;
+            gap: 4rem;
+            min-width: 100%;
+            animation: scroll 25s linear infinite;
+        }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Image Overlay */
+        .image-overlay {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .image-overlay:hover::before {
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2c1810',
+                        accent: '#d4a574',
+                        light: '#f8f6f3',
+                    },
+                    fontFamily: {
+                        serif: ['Libre Baskerville', 'serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-gray-900">
+
+    <!-- Announcement Bar -->
+    <div class="bg-primary text-white py-2 overflow-hidden">
+        <div class="marquee">
+            <div class="marquee-content">
+                <span class="text-sm font-medium whitespace-nowrap">✨ Envíos Gratis por compras superiores a $129.990</span>
+                <span class="text-sm font-medium whitespace-nowrap">🛡️ Garantía de Satisfacción</span>
+                <span class="text-sm font-medium whitespace-nowrap">🔒 Compra 100% Segura</span>
+                <span class="text-sm font-medium whitespace-nowrap">✨ Envíos Gratis por compras superiores a $129.990</span>
+                <span class="text-sm font-medium whitespace-nowrap">🛡️ Garantía de Satisfacción</span>
+                <span class="text-sm font-medium whitespace-nowrap">🔒 Compra 100% Segura</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="sticky top-0 z-50 bg-white transition-all duration-300">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <button id="menuToggle" class="lg:hidden mr-4 text-2xl">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="text-3xl font-serif font-bold gradient-text">Matizes</h1>
+                </div>
+
+                <!-- Desktop Menu -->
+                <ul class="hidden lg:flex space-x-8 text-sm font-medium uppercase tracking-wide">
+                    <li><a href="#inicio" class="hover:text-accent transition">Inicio</a></li>
+                    <li><a href="#sneakers" class="hover:text-accent transition">Sneakers</a></li>
+                    <li><a href="#canoas" class="hover:text-accent transition">Canoas</a></li>
+                    <li><a href="#yute" class="hover:text-accent transition">Yute</a></li>
+                    <li><a href="#tacones" class="hover:text-accent transition">Tacones</a></li>
+                    <li><a href="#contacto" class="hover:text-accent transition">Contacto</a></li>
+                </ul>
+
+                <!-- Icons -->
+                <div class="flex items-center space-x-6">
+                    <button class="text-xl hover:text-accent transition">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="text-xl hover:text-accent transition">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button id="cartToggle" class="relative text-xl hover:text-accent transition">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-80 h-full bg-white z-50 shadow-2xl p-8">
+        <button id="closeMenu" class="absolute top-4 right-4 text-2xl">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="text-2xl font-serif font-bold mb-8 gradient-text">Menu</h2>
+        <ul class="space-y-6 text-lg font-medium">
+            <li><a href="#inicio" class="block hover:text-accent transition">Inicio</a></li>
+            <li><a href="#sneakers" class="block hover:text-accent transition">Sneakers</a></li>
+            <li><a href="#canoas" class="block hover:text-accent transition">Canoas</a></li>
+            <li><a href="#yute" class="block hover:text-accent transition">Yute</a></li>
+            <li><a href="#tacones" class="block hover:text-accent transition">Tacones</a></li>
+            <li><a href="#contacto" class="block hover:text-accent transition">Contacto</a></li>
+        </ul>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar fixed top-0 right-0 w-full md:w-96 h-full bg-white z-50 shadow-2xl flex flex-col">
+        <div class="p-6 border-b">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-serif font-bold">Tu Carrito</h2>
+                <button id="closeCart" class="text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6">
+            <p class="text-center text-gray-500 py-12">Tu carrito está vacío</p>
+        </div>
+
+        <div class="border-t p-6">
+            <div class="flex justify-between mb-4 text-lg font-semibold">
+                <span>Subtotal:</span>
+                <span id="cartSubtotal">$0</span>
+            </div>
+            <button id="checkoutBtn" class="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Proceder al Pago
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=80" 
+             alt="Hero" 
+             class="absolute inset-0 w-full h-full object-cover hero-image">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+        
+        <div class="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-serif font-bold mb-6 scroll-reveal" style="animation-delay: 0.2s">
+                Calzado en Cuero<br>con Tecnología Ultraconfort
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 font-light scroll-reveal" style="animation-delay: 0.4s">
+                Tus pasos nos inspiran, juntos dejamos huella
+            </p>
+            <a href="#sneakers" class="inline-block bg-accent text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-opacity-90 transform hover:scale-105 transition scroll-reveal" style="animation-delay: 0.6s">
+                Ver Última Colección
+            </a>
+        </div>
+
+        <!-- Security Badges -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-8 scroll-fade" style="animation-delay: 0.8s">
+            <div class="bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-semibold flex items-center space-x-2">
+                <i class="fas fa-shield-alt text-accent"></i>
+                <span>Compra Segura</span>
+            </div>
+            <div class="bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-semibold flex items-center space-x-2">
+                <i class="fas fa-truck text-accent"></i>
+                <span>Envío Gratis</span>
+            </div>
+            <div class="bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-semibold flex items-center space-x-2">
+                <i class="fas fa-sync-alt text-accent"></i>
+                <span>Cambios Fáciles</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sneakers Section -->
+    <section id="sneakers" class="py-20 bg-light">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-4 scroll-reveal">Sneakers</h2>
+            <p class="text-center text-gray-600 mb-12 scroll-reveal">Diseñada para mujeres auténticas que no renuncian al estilo</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="sneakersGrid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+
+            <div class="text-center mt-12 scroll-reveal">
+                <a href="#" class="inline-block border-2 border-primary text-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition">
+                    Ver Todos los Sneakers
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee Brand Values -->
+    <section class="bg-primary py-6">
+        <div class="marquee">
+            <div class="marquee-content">
+                <span class="text-white text-lg font-semibold">✨ Hecho a Mano</span>
+                <span class="text-white text-lg font-semibold">🇨🇴 100% Colombiano</span>
+                <span class="text-white text-lg font-semibold">👟 Comodidad en tus Pies</span>
+                <span class="text-white text-lg font-semibold">✨ Hecho a Mano</span>
+                <span class="text-white text-lg font-semibold">🇨🇴 100% Colombiano</span>
+                <span class="text-white text-lg font-semibold">👟 Comodidad en tus Pies</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Image Banner -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="scroll-reveal">
+                    <img src="https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=800&q=80" 
+                         alt="Featured" 
+                         class="rounded-2xl shadow-2xl w-full">
+                </div>
+                <div class="scroll-reveal">
+                    <h2 class="text-4xl font-serif font-bold mb-6">Calidad de Exportación</h2>
+                    <p class="text-gray-700 text-lg mb-6 leading-relaxed">
+                        Somos una tienda con más de 6 años ubicada en la ciudad de Bucaramanga, 
+                        hecha por artesanos con calidad de exportación. Cada par de zapatos es 
+                        creado con dedicación y amor al detalle.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span>Garantía de Satisfacción</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span>Cambios de Talla Fáciles</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span>Plantillas Ultraconfort</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span>Envíos Gratis Disponibles</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="inline-block bg-accent text-white px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition">
+                        Conoce Más
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collections Grid -->
+    <section class="py-20 bg-light">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-4 scroll-reveal">Colecciones</h2>
+            <p class="text-center text-gray-600 mb-12 scroll-reveal">Explora nuestras categorías destacadas</p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="scroll-scale group cursor-pointer">
+                    <div class="image-overlay rounded-2xl overflow-hidden mb-4">
+                        <img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=600&q=80" 
+                             alt="Sneakers" 
+                             class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-500">
+                    </div>
+                    <h3 class="text-2xl font-serif font-bold mb-2">Sneakers</h3>
+                    <p class="text-gray-600">Diseñada para mujeres auténticas que no renuncian ni al estilo ni a la comodidad</p>
+                </div>
+
+                <div class="scroll-scale group cursor-pointer">
+                    <div class="image-overlay rounded-2xl overflow-hidden mb-4">
+                        <img src="https://images.unsplash.com/photo-1603487742131-4160ec999306?w=600&q=80" 
+                             alt="Canoas" 
+                             class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-500">
+                    </div>
+                    <h3 class="text-2xl font-serif font-bold mb-2">Canoas</h3>
+                    <p class="text-gray-600">Diseñadas para fluir con tu esencia en cuero y materiales premium</p>
+                </div>
+
+                <div class="scroll-scale group cursor-pointer">
+                    <div class="image-overlay rounded-2xl overflow-hidden mb-4">
+                        <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80" 
+                             alt="Yute" 
+                             class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-500">
+                    </div>
+                    <h3 class="text-2xl font-serif font-bold mb-2">Yute</h3>
+                    <p class="text-gray-600">Ligereza, frescura y autenticidad en cada paso</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Canoas Section -->
+    <section id="canoas" class="py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-4 scroll-reveal">Canoas</h2>
+            <p class="text-center text-gray-600 mb-12 scroll-reveal">Comodidad y estilo en perfecta armonía</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="canoasGrid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-gradient-to-br from-primary to-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-4 scroll-reveal">Testimonios</h2>
+            <p class="text-center text-gray-300 mb-12 scroll-reveal">Lo que dicen nuestras clientas</p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/10 backdrop-blur p-8 rounded-2xl scroll-scale">
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                    </div>
+                    <p class="mb-4 text-gray-200">"Muy hermosas y muy cómodas. Me encantaron 💓"</p>
+                    <p class="font-semibold">- Margarita Arboleda</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur p-8 rounded-2xl scroll-scale">
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                    </div>
+                    <p class="mb-4 text-gray-200">"Encantada la mejor elección, son super confortables"</p>
+                    <p class="font-semibold">- Lizeth Fernanda Q. Muñoz</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur p-8 rounded-2xl scroll-scale">
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                        <i class="fas fa-star text-accent"></i>
+                    </div>
+                    <p class="mb-4 text-gray-200">"Son muy bonitas y cómodas y me quitaron un dolor que traía en los pies"</p>
+                    <p class="font-semibold">- Levis Madera</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section id="contacto" class="py-20 bg-light">
+        <div class="container mx-auto px-4 text-center max-w-2xl">
+            <h2 class="text-4xl font-serif font-bold mb-4 scroll-reveal">Suscríbete</h2>
+            <p class="text-gray-600 mb-8 scroll-reveal">Para recibir nuestras promociones y lanzamientos antes que otros</p>
+            
+            <form class="flex flex-col md:flex-row gap-4 scroll-reveal">
+                <input type="email" 
+                       placeholder="Tu correo electrónico" 
+                       class="flex-1 px-6 py-4 rounded-lg border-2 border-gray-300 focus:border-accent focus:outline-none">
+                <button type="submit" 
+                        class="bg-accent text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition">
+                    Suscribirse
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <h3 class="text-2xl font-serif font-bold mb-6">Matizes</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        Somos una empresa santandereana, amantes del calzado, 
+                        inspirados en la comodidad y calidad.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Enlaces</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-accent transition">Términos y Condiciones</a></li>
+                        <li><a href="#" class="hover:text-accent transition">Políticas</a></li>
+                        <li><a href="#" class="hover:text-accent transition">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-accent transition">PQRS</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contacto</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><i class="fab fa-whatsapp mr-2"></i>315 705 4649</li>
+                        <li><i class="fas fa-envelope mr-2"></i>info@matizes.com.co</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>Bucaramanga, Colombia</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-2xl hover:text-accent transition"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-2xl hover:text-accent transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-2xl hover:text-accent transition"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 Matizes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
